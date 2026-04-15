@@ -1,0 +1,16 @@
+name: Check Energy Tracker Cron
+
+on:
+  schedule:
+    # Runs every 8 minutes (Since energy is generated every 8 minutes)
+    - cron: '*/8 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping-vercel:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hit Ping Endpoint
+        run: |
+          curl -X GET "https://wwmtracker.vercel.app/api/cron/check-energy" \
+          -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
