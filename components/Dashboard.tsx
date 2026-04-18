@@ -17,7 +17,7 @@ export default function Dashboard() {
   const [, setTick] = useState(0);
 
   useEffect(() => {
-    fetchData();
+    fetchData(true);
 
     // Setup realtime subscription
     const channel = supabase
@@ -25,12 +25,12 @@ export default function Dashboard() {
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'characters' },
-        (payload) => fetchData()
+        (payload) => fetchData(false)
       )
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'accounts' },
-        (payload) => fetchData()
+        (payload) => fetchData(false)
       )
       .subscribe();
 
@@ -45,8 +45,8 @@ export default function Dashboard() {
     };
   }, []);
 
-  const fetchData = async () => {
-    setLoading(true);
+  const fetchData = async (showLoading = false) => {
+    if (showLoading) setLoading(true);
     try {
       const { data: accountsData, error: accountsError } = await supabase
         .from('accounts')
@@ -67,7 +67,7 @@ export default function Dashboard() {
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
-      setLoading(false);
+      if (showLoading) setLoading(false);
     }
   };
 

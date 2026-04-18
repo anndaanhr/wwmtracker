@@ -38,9 +38,11 @@ export default function CharacterCard({ character, onDataChange }: CharacterCard
 
   const handleSpend = async () => {
     if (currentEnergy >= 60) {
-      if (confirm(`Spend 60 energy for farming on ${character.name}?`)) {
+      const remainingEnergy = currentEnergy % 60;
+      const spentEnergy = currentEnergy - remainingEnergy;
+      if (confirm(`Spend ${spentEnergy} energy for farming on ${character.name}?`)) {
         await supabase.from('characters').update({
-          energy: currentEnergy - 60,
+          energy: remainingEnergy,
           last_energy_update: new Date().toISOString(),
           notified_full: false
         }).eq('id', character.id);
@@ -121,7 +123,7 @@ export default function CharacterCard({ character, onDataChange }: CharacterCard
               : 'bg-[rgba(255,255,255,0.02)] text-gray-500 cursor-not-allowed border border-transparent'
           }`}
         >
-          {isReady ? 'Spend 60 Energy' : 'Not enough energy'}
+          {isReady ? 'Spend All Energy' : 'Not enough energy'}
         </button>
       </div>
 
